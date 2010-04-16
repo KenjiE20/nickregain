@@ -503,6 +503,7 @@ sub regain_command
 				regain_conn("","",$name);
 			}
 		}
+		weechat::infolist_free($infolist);
 		return weechat::WEECHAT_RC_OK;
 	}
 	
@@ -544,7 +545,7 @@ sub regain_command
 		}
 		else
 		{
-                        weechat::print ($buffer, weechat::prefix("error")."nickregain not enabled for this server, try \"/nickregain on\" to enable");
+			weechat::print ($buffer, weechat::prefix("error")."nickregain not enabled for this server, try \"/nickregain on\" to enable");
 		}
 		return weechat::WEECHAT_RC_OK;
 	}
@@ -555,7 +556,7 @@ sub regain_now
 {
 	$name = $_[0];
 	
-        # Update all settings
+	# Update all settings
 	regain_setup();
 	
 	# Are we configured to run on this server & check we are connected for manual commands
@@ -617,4 +618,5 @@ sub regain_info
 		weechat::print("", $name.": Current Nick: ".$config{$name}{'curnick'});
 		weechat::print("", $name.": Regain Nicks: ".$config{$name}{'nicks'});
 	}
+	weechat::infolist_free($infolist);
 }
