@@ -106,6 +106,10 @@ sub regain_setup
 		{
 			weechat::config_set_plugin($name."_command", "");
 		}
+		if (!weechat::config_is_set_plugin($name."_command_delay"))
+		{
+			weechat::config_set_plugin($name."_command_delay", "0");
+		}
 		if (!weechat::config_is_set_plugin($name."_enabled"))
 		{
 			weechat::config_set_plugin($name."_enabled", "off");
@@ -114,6 +118,7 @@ sub regain_setup
 		# Set / update internal vars
 		$config{$name}{'enabled'} = weechat::config_get_plugin($name."_enabled");
 		$config{$name}{'command'} = weechat::config_get_plugin($name."_command");
+		$config{$name}{'command'} = weechat::config_get_plugin($name."_command_delay");
 		$config{$name}{'delay'} = weechat::config_get_plugin($name."_delay");
 		$config{$name}{'curnick'} = weechat::infolist_string($infolist, "nick");
 		$config{$name}{'nicks'} = weechat::infolist_string($infolist, "nicks");
