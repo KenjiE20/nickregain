@@ -123,6 +123,11 @@ sub regain_setup
 		if (!exists $config{$name}{'active'})
 		{
 			$config{$name}{'active'} = 0;
+			# Init hook vars
+			$nhook{$name} = 0;
+			$qhook{$name} = 0;
+			$thook{$name} = 0;
+			$ihook{$name} = 0;
 		}
 	}
 	weechat::infolist_free($infolist);
@@ -138,10 +143,26 @@ sub regain_disconn
 	# Are we configured to run on this server
 	if ($config{$name}{'enabled'} ne 'off')
 	{
-		# Unhook any timers, as they can't do anything now
-		if (exists $thook{$name})
+		# Unhook any hooks, as they can't do anything now
+		if ($nhook{$name})
+		{
+			weechat::unhook($nhook{$name});
+			$nhook{$name} = 0;
+		}
+		if ($qhook{$name})
+		{
+			weechat::unhook($qhook{$name});
+			$qhook{$name} = 0;
+		}
+		if ($thook{$name})
 		{
 			weechat::unhook($thook{$name});
+			$thook{$name} = 0;
+		}
+		if ($ihook{$name})
+		{
+			weechat::unhook($ihook{$name});
+			$ihook{$name} = 0;
 		}
 	}
 #DEBUG	regain_info();
@@ -195,19 +216,19 @@ sub regain_conn
 			else
 			{
 				weechat::print($bufferp, "nickregain.pl: Server has no regain command set, hooking QUIT, NICK and timer");
-				if (!exists $qhook{$name})
+				if (!$qhook{$name})
 				{
 					$qhook{$name} = weechat::hook_signal("$name,irc_in_quit", "regain_quit_nick_cb", "");
 				}
-				if (!exists $nhook{$name})
+				if (!$nhook{$name})
 				{
 					$nhook{$name} = weechat::hook_signal("$name,irc_in_nick", "regain_quit_nick_cb", "");
 				}
-				if (!exists $thook{$name})
+				if (!$thook{$name})
 				{
-					$thook{$name} = weechat::hook_timer( $config{$name}{'delay'} * 1000, 0, 0, regain_timer_handle, $name);
+					$thook{$name} = weechat::hook_timer( $config{$name}{'delay'} * 1000, 0, 0, "regain_timer_handle", $name);
 				}
-				if (!exists $ihook{$name})
+				if (!$ihook{$name})
 				{
 					$ihook{$name} = weechat::hook_signal("$name,irc_in_303", "regain_isoncb", "");
 				}
@@ -349,9 +370,13 @@ sub regain_better_nick
 			{
 				weechat::print($bufferp, "nickregain.pl: Regaining primary nick, stopping regain");
 				weechat::unhook($nhook{$name});
+				$nhook{$name} = 0;
 				weechat::unhook($qhook{$name});
+				$qhook{$name} = 0;
 				weechat::unhook($thook{$name});
+				$thook{$name} = 0;
 				weechat::unhook($ihook{$name});
+				$ihook{$name} = 0;
 				$config{$name}{'active'} = 0;
 			}
 			# No need to test further
@@ -461,9 +486,13 @@ sub regain_isoncb
 					# Unhook everything
 					weechat::print($bufferp, "nickregain.pl: Regaining primary nick, stopping regain");
 					weechat::unhook($nhook{$name});
+					$nhook{$name} = 0;
 					weechat::unhook($qhook{$name});
+					$qhook{$name} = 0;
 					weechat::unhook($thook{$name});
+					$thook{$name} = 0;
 					weechat::unhook($ihook{$name});
+					$ihook{$name} = 0;
 					$config{$name}{'active'} = 0;
 				}
 				# No need to test further
@@ -530,10 +559,26 @@ sub regain_command
 	{
 		weechat::config_set_plugin($name."_enabled", "off");
 
-		weechat::unhook($nhook{$name}) if (exists $nhook{$name});
-		weechat::unhook($qhook{$name}) if (exists $qhook{$name});
-		weechat::unhook($thook{$name}) if (exists $thook{$name});
-		weechat::unhook($ihook{$name}) if (exists $ihook{$name});
+		if ($nhook{$name})
+		{
+			weechat::unhook($nhook{$name});
+			$nhook{$name} = 0;
+		}
+		if ($qhook{$name})
+		{
+			weechat::unhook($qhook{$name});
+			$qhook{$name} = 0;
+		}
+		if ($thook{$name})
+		{
+			weechat::unhook($thook{$name});
+			$thook{$name} = 0;
+		}
+		if ($ihook{$name})
+		{
+			weechat::unhook($ihook{$name});
+			$ihook{$name} = 0;
+		}
 		return weechat::WEECHAT_RC_OK;
 	}
 	elsif ($args eq 'now')
