@@ -282,7 +282,7 @@ sub regain_quit_nick_cb
 		$bufferp = weechat::info_get("irc_buffer", $server);
 
 		# Get newly freed nick and nickchange nick
-		if ($cb_data =~ /:(.*) QUIT :(.*)/ || $cb_data =~ /:(.*) NICK :(.*)/)
+		if ($cb_data =~ /:(.*) QUIT :?(.*)/ || $cb_data =~ /:(.*) NICK :?(.*)/)
 		{
 			$freenick = weechat::info_get("irc_nick_from_host", $1);
 			$nickchanged = weechat::info_get("irc_nick_from_host", $2);
