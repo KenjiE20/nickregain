@@ -19,7 +19,11 @@
 # You WILL need to add the '/nick' command to this
 # Use $nick to mark the nick, Commands can be separated using ;
 # e.g /msg nickserv ghost $nick;/nick $nick;/msg nickserv identify password
-# See '/msg nickserv help' for exact syntax\n
+# See '/msg nickserv help' for exact syntax
+#
+# /set plugins.var.perl.nickregain.<servername>_command_delay
+# This sets the delay between the server connection and the command being triggered
+# Default: 0
 #
 # /set plugins.var.perl.nickregain.<servername>_delay
 # This sets the delay between each /ison check
@@ -27,6 +31,11 @@
 # Default: 60
 #
 # History:
+# 2009-04-24, KenjiE20 <longbow@longbowslair.co.uk>:
+#	v1.1	-feature: Add server_command_delay option to add a delay to server_command
+#		-fix: Broken quit/nick change detection
+#		-fix: Close off leaking infolists
+#		-fix: Hooks unhook properly now
 # 2009-10-27, KenjiE20 <longbow@longbowslair.co.uk>:
 #	v1.0.2	-fix: Make ison nicks check quote better, didn't always work
 #			Give /nickregain now it's own sub, to trigger ison
@@ -69,6 +78,9 @@ $helpstr = "  on: Enables regain for current server
  Use \$nick to mark the nick, Commands can be separated using ;
  e.g /msg nickserv ghost \$nick;/nick \$nick;/msg nickserv identify password
  See '/msg nickserv help' for exact syntax\n
+ ".weechat::color("bold")."/set plugins.var.perl.nickregain.<servername>_command_delay".weechat::color("-bold")."
+ This sets the delay between the server connection and the command being triggered
+ Default: ".weechat::color("bold")."0".weechat::color("-bold")."\n
  ".weechat::color("bold")."/set plugins.var.perl.nickregain.<servername>_enabled".weechat::color("-bold")."
  This sets whether the nickregain is will run on a server\n
  ".weechat::color("bold")."/set plugins.var.perl.nickregain.<servername>_delay".weechat::color("-bold")."
