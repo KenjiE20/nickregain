@@ -201,20 +201,14 @@ sub regain_conn
 			if ($config{$name}{'command'} ne "")
 			{
 #DEBUG				weechat::print($bufferp, "nickregain.pl: Server has command, using");
-
-				# Split command by ;
-				undef @cmds;
-				@cmds = split(/;/, $config{$name}{'command'});
-				# Run commands
-				foreach (@cmds)
+				if ($config{$name}{'command_delay'} ne "0")
 				{
-					# Sub config nick
-					$_ =~ s/\$nick/$nick/;
-					# Send commands
-					weechat::command($bufferp, $_);
+					weechat::hook_timer( $config{$name}{'command_delay'} * 1000, 0, 1, "regain_conn_command", $name);
 				}
-				# Deactivate and stop
-				$config{$name}{'active'} = 0;
+				else
+				{
+					regain_conn_command($name);
+				}
 				return weechat::WEECHAT_RC_OK;
 			}
 			# If not, hook quit catcher, and timer
@@ -240,6 +234,28 @@ sub regain_conn
 			}
 		}
 	}
+	return weechat::WEECHAT_RC_OK;
+}
+
+sub regain_conn_command
+{
+	$name = $_[0];
+	$bufferp = weechat::info_get("irc_buffer", $name);
+#DEBUG				weechat::print($bufferp, "nickregain.pl: Sending commands");
+	#Split command by ;
+	undef @cmds;
+	@cmds = split(/;/, $config{$name}{'command'});
+	
+	# Run commands
+	foreach (@cmds)
+	{
+		# Sub config nick
+		$_ =~ s/\$nick/$nick/;
+		# Send commands
+		weechat::command($bufferp, $_);
+	}
+	# Deactivate and stop
+	$config{$name}{'active'} = 0;
 	return weechat::WEECHAT_RC_OK;
 }
 
