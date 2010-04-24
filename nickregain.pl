@@ -241,7 +241,7 @@ sub regain_conn_command
 {
 	$name = $_[0];
 	$bufferp = weechat::info_get("irc_buffer", $name);
-#DEBUG				weechat::print($bufferp, "nickregain.pl: Sending commands");
+#DEBUG	weechat::print($bufferp, "nickregain.pl: Sending commands");
 	#Split command by ;
 	undef @cmds;
 	@cmds = split(/;/, $config{$name}{'command'});
