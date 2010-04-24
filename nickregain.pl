@@ -1,6 +1,6 @@
 #
 # nickregain.pl - Automatically regain your nick when avaiable, for weechat 0.3.0
-# Version 1.0.2
+# Version 1.1
 #
 # Automatically checks every x mins to see if your prefered nicks are available
 # and issues either /nick or a custom nickserv command
@@ -76,7 +76,7 @@ $helpstr = "  on: Enables regain for current server
  Used incase you can't see the old nick quit or nick change
  Default: ".weechat::color("bold")."60".weechat::color("-bold");
 
-weechat::register("nickregain", "KenjiE20", "1.0.2", "GPL3", "Auto Nick Regaining", "", "");
+weechat::register("nickregain", "KenjiE20", "1.1", "GPL3", "Auto Nick Regaining", "", "");
 
 regain_setup();
 
